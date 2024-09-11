@@ -1,0 +1,64 @@
+Explanation:
+destination Function:
+
+Old Parameters: req, file, cb
+New Parameters: req, uploadedFile, callback
+Function: The uploadedFile parameter (formerly file) represents the file being uploaded, and callback (formerly cb) is the function to call with the destination directory.
+filename Function:
+
+Old Parameters: req, file, cb
+New Parameters: req, uploadedFile, callback
+Function: The uploadedFile parameter (formerly file) contains metadata about the file, and callback (formerly cb) is the function to call with the filename.
+Key Points:
+Consistency: Ensure that you are consistent in your naming within the function. The names you choose should clearly represent their roles.
+Functionality: The core functionality depends on the values of these parameters, not their names. As long as you correctly use the values provided by Multer, you can name the parameters anything you like.
+Changing parameter names can make your code more readable or align it better with your project’s naming conventions, as long as you handle the parameters correctly.
+
+javascript
+Copy code
+const multer = require('multer');
+const path = require('path');
+
+// Configure the storage engine
+const storage = multer.diskStorage({
+    // Destination function
+    destination: function (req, uploadedFile, callback) {
+        callback(null, 'uploads'); // 'uploads' is the folder where files will be saved
+    },
+    // Filename function
+    filename: function (req, uploadedFile, callback) {
+        // Generate a unique filename by appending timestamp
+        const uniqueSuffix = Date.now() + path.extname(uploadedFile.originalname);
+        // Use fieldname to differentiate multiple files, or you can just use uniqueSuffix
+        callback(null, uploadedFile.fieldname + '_' + uniqueSuffix);
+    }
+});
+
+// Create an instance of Multer with the storage configuration
+const upload = multer({ storage: storage });
+
+// Export the upload function to be used in your routes
+module.exports = upload;
+
+Error
+--------------------
+
+send  <0.19.0
+Severity: moderate
+send vulnerable to template injection that can lead to XSS - https://github.com/advisories/GHSA-m6fv-jmcg-4jfg
+fix available via `npm audit fix`
+node_modules/send
+  serve-static  <=1.16.0
+  Depends on vulnerable versions of send
+  node_modules/serve-static
+
+
+5 vulnerabilities (2 moderate, 3 high)
+
+To address all issues, run:
+  npm audit fix
+
+npm audit fix --force for 
+
+
+
